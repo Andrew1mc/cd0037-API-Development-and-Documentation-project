@@ -39,15 +39,16 @@ def create_app(test_config=None):
     """
     @app.route("/categories")
     def retrieve_categories():
+
         selection = Category.query.order_by(Category.id).all()
         
         if len(selection) == 0:
             abort(404)
 
         data = []
-
         for category in selection:
             data.append(category.type)
+            
         
         # data = [Category.format() for Category in selection]
         
@@ -92,12 +93,10 @@ def create_app(test_config=None):
                     "id": question['id'],
                     "question" : question['question'],
                     "answer" : question['answer'],
-                    "category" : Category.query.filter(Category.id == question['category']).first().type,
+                    "category" : question['category'],
                     "difficulty" : question['difficulty']
                 })
 
-
-            
         for category in Category.query.all():
             categories.append(category.type)
   
@@ -215,7 +214,9 @@ def create_app(test_config=None):
     def search_questions():
         
         body= request.get_json()
-        
+        if(body is None):
+            abort(422)
+
         search_term=body.get('searchTerm', None)
 
         q_data = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
@@ -262,13 +263,9 @@ def create_app(test_config=None):
     def question_by_category(id):
 
         q_data = Question.query.all()
-        
-        questions = Question.query.order_by(Question.id).all()
-        chosen = Category.query.filter(Category.id == id + 1).first()
-                    
-        
-        
-
+        chosen = Category.query.filter(Category.id == id + 1).first()   
+        if(chosen is None):
+            abort(404)
         q_data = Question.query.filter(Question.category == str(chosen.id)).all()
         
         paginated = paginate_questions(request,q_data)
@@ -281,13 +278,14 @@ def create_app(test_config=None):
                     "id": question['id'],
                     "question" : question['question'],
                     "answer" : question['answer'],
-                    "category" : Category.query.filter(Category.id == question['category']).first().type,
+                    "category" : Category.query.filter(Category.id == question['category']).first().id,
                     "difficulty" : question['difficulty']
                 })
 
                 if(categories.count(Category.query.filter(Category.id == question['category']).first().type) <1):
                     categories.append(Category.query.filter(Category.id == question['category']).first().type)
-            
+        
+
         return jsonify(
             {
                 "success": True,
@@ -312,38 +310,29 @@ def create_app(test_config=None):
     @app.route("/quizzes", methods = ["POST"])
     def quiz():
 
-        all = False
         body= request.get_json()
+        if body is None: 
+            abort(422)
         category=body.get('quiz_category', '')
         prior_questions = body.get('previous_questions','')
-        
 
-        if (category["type"] =="click"):
-            all = True
-
-
-        if (not all):
-            definedCategory = Category.query.filter(Category.type == category['type']).first()
-
-        
-      
-
-        if(not all):
-            questions_in_category = Question.query.filter(Question.category == str(definedCategory.id)).all()
+        if category["type"] != "click" :
+            questions_in_category = Question.query.filter(Question.category == str(Category.query.filter(Category.type == category['type']).first().id)).all()
         else:
             questions_in_category = Question.query.all()
-        question_options = []
 
+        question_options = []
+        
         for question in questions_in_category:
 
-            if(prior_questions.count(str(question.id)) == 0):
-                question_options.append(question)
-
-
-
+             if(prior_questions.count(str(question.id)) == 0):
+                 question_options.append(question)
+        
         if (len(question_options) >0):
             new_question = question_options[random.randint(0, len(question_options)-1)]
             
+            
+
         else:
             return jsonify({
                 "success" : True,

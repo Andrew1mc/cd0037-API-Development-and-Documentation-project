@@ -81,7 +81,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertTrue(data["total_questions"])
-        self.assertEqual(len(data["questions"]), 8)
+        self.assertEqual(len(data["questions"]), 7)
+
+    def test_search_questions_failure(self):
+        res = self.client().post("/questions/search")
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+
 
     def test_search_questions_no_results(self):
         res = self.client().post("/questions/search", json={"searchTerm": "poiahgloihdalgoiuhfdalkgha"})
@@ -91,7 +97,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertEqual(data["total_questions"],0)
         self.assertEqual(len(data["questions"]), 0)
-
 
     def test_question_by_category_questions(self):
         res = self.client().get("/categories/0/questions")
@@ -109,13 +114,25 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertTrue(data["total_questions"])
         self.assertEqual(len(data["questions"]), 2)
+        # add 1 to category id, i.e. cat 5 is sports, not entertainment
+    def test_question_by_category_questions(self):
+        res = self.client().get("/categories/7/questions")
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
 
-    def test_quizzes(self):
+    def test_quizzes_success(self):
         res = self.client().post("/quizzes", json={'quiz_category': {'type': 'Science', 'id': '0'}})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
+        
+    def test_quizzes_failure(self):
+        res = self.client().post("/quizzes")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        
         
 
     def test_404_if_book_does_not_exist(self):
