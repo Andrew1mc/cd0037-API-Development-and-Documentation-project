@@ -288,12 +288,13 @@ def create_app(test_config=None):
 
         return jsonify(
             {
-                "success": True,
+               "success": True,
                 "questions" : Qdata,
                 "total_questions" : len(q_data),
                 "categories" : categories,
                 "total_categories" : len(categories)   
             })
+    
     
     """
     @TODO:
