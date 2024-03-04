@@ -84,7 +84,7 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/question/search`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -127,6 +127,7 @@ class QuestionView extends Component {
   };
 
   render() {
+    
     return (
       <div className='question-view'>
         <div className='categories-list'>
@@ -140,6 +141,7 @@ class QuestionView extends Component {
           <ul>
             {Object.keys(this.state.categories).map((id) => (
               <li
+                
                 key={id}
                 onClick={() => {
                   this.getByCategory(id);
@@ -155,19 +157,31 @@ class QuestionView extends Component {
             ))}
           </ul>
           <Search submitSearch={this.submitSearch} />
+          
         </div>
         <div className='questions-list'>
           <h2>Questions</h2>
+<<<<<<< HEAD
 
           {this.state.questions.map((q, ind) => (
+=======
+        
+          {this.state.questions.map((q, ind) => (  
+>>>>>>> 7a9db6e0ebea9a2abeef907591815f017ba049c5
             <Question
               key={q.id}
               question={q.question}
               answer={q.answer}
+<<<<<<< HEAD
               category={this.state.categories[q.category-1]}
+=======
+              category ={q.category}
+              //category={this.state.categories[q.category]}
+>>>>>>> 7a9db6e0ebea9a2abeef907591815f017ba049c5
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
+            
           ))}
           <div className='pagination-menu'>{this.createPagination()}</div>
         </div>
