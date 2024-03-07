@@ -24,10 +24,6 @@ def create_app(test_config=None):
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
-<<<<<<< HEAD
-
-=======
->>>>>>> 7a9db6e0ebea9a2abeef907591815f017ba049c5
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     """
@@ -36,20 +32,10 @@ def create_app(test_config=None):
     
     @app.after_request
     def after_request(response):
-<<<<<<< HEAD
-        response.headers.add(
-            "Accesss-Control-Allow-Headers", "Content-Type,Authorization,true"
-        )
-        response.headers.add(
-            "Accesss-Control-Allow-Methods", "GET, PUT, PATCH, DELETE, POST"
-        )
-        
-=======
         response.headers.add('Accesss-Control-Allow-Headers', 'Content-Type,Authorization' )
         response.headers.add('Accesss-Control-Allow-Methods', 'GET, PUT, PATCH, DELETE, POST, OPTIONS')
         
         return response
->>>>>>> 7a9db6e0ebea9a2abeef907591815f017ba049c5
 
     
     """
@@ -57,9 +43,6 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     """
-<<<<<<< HEAD
- 
-=======
     @app.route("/categories")
     def retrieve_categories():
 
@@ -82,7 +65,6 @@ def create_app(test_config=None):
                 "total_categories": len(selection),
             }
         )
->>>>>>> 7a9db6e0ebea9a2abeef907591815f017ba049c5
 
 
     """
